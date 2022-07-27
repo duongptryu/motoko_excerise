@@ -1,6 +1,9 @@
 import Array "mo:base/Array";
+import Blob "mo:base/Blob";
 import Buffer "mo:base/Buffer";
 import Char "mo:base/Char";
+import Debug "mo:base/Debug";
+import Hash "mo:base/Hash";
 import Iter "mo:base/Iter";
 import Map "mo:base/HashMap";
 import Nat8 "mo:base/Nat8";
@@ -103,10 +106,127 @@ actor day2 {
 
     //challenge 8
     public func duplicated_character(text: Text) : async Text {
-        var map = Map.HashMap<Text, Nat>(0, Text.equal, Text.hash);
+        var map = Map.HashMap<Char, Nat>(0, Char.equal, func(k: Char) : Hash.Hash {return Text.hash(Text.fromChar(k))});
 
-        for (t in text.vals()) {
-            switch() {}
-        }
+        for (t in text.chars()) {
+            switch(map.get(t)){
+                case null {
+                    map.put(t, 1);
+                };
+                case (?v) {
+                    let v_new = v + 1;
+                    map.put(t, v_new);
+                };
+            };
+        };
+
+        for ((k, v) in map.entries()) {
+            if (v > 1){
+                return Text.fromChar(k);
+            };
+        };
+
+        return text;
+    };
+
+    //challenge 9
+    public func size_in_bytes(t: Text): async Nat{
+        var utf_t = Text.encodeUtf8(t);
+        var arr_blob = Blob.toArray(utf_t);
+        return arr_blob.size();
+    };
+
+    //  // Challenge 10 
+    // func swap(array : [Nat], i : Nat, j : Nat) : [Nat] {
+    //     let mutable_array = Array.thaw<Nat>(array);
+    //     let tmp = mutable_array[i];
+    //     mutable_array[i] := mutable_array[j];
+    //     mutable_array[j] := tmp;
+    //     return(Array.freeze<Nat>(mutable_array))
+    // };
+
+    // public func bubble_sort(array : [Nat]) : async [Nat] {
+    //     var sorted = array;
+    //     let size = array.size();
+    //     for(i in Iter.range(0, size - 1)){
+    //         for (j in Iter.range(0, size - 1 - i)){
+    //             if(sorted[i] > sorted[i + 1]){
+    //                 sorted := _swap(sorted, i , j);
+    //             };
+    //         };
+    //     };
+    //     return (sorted)
+    // };
+
+    //challenge 11
+    public func nat_opt_to_nat(n: ?Nat, m: Nat): async Nat {
+        switch(n) {
+            case (null) {
+                return m;
+            };
+            case (?n){
+                return n;
+            };
+        };
+    };
+
+    //challenge 12
+    public func day_of_the_week(n: Nat) : async ?Text {
+        do ? {
+            switch (n) {
+                case (1) { "Monday" };
+                case (2) { "Tuesday" };
+                case (3) { "Wednesday" };
+                case (4) { "Thursday" };
+                case (5) { "Friday" };
+                case (6) { "Saturday" };
+                case (7) { "Sunday" };
+                case (_) { null! };
+            };
+        };
+    };
+
+    // challenge 13
+    let f = func (x: ?Nat): ?Nat {
+        switch(x) {
+            case (null) {
+                return ?0;
+                };
+            case (?x) {
+                return ?x;
+            };
+        };
+    };
+
+    public func populate_array(arr: [?Nat]): async [Nat] {
+        let new_arr = Array.mapFilter<?Nat, Nat> (arr, f);
+        return new_arr;
+    };
+
+    //challenge 14
+    public func sum_of_array(arr: [Nat]) : async Nat {
+       let sum = Array.foldLeft<Nat, Nat>(arr, 0, func(a , b) {a + b});
+       return sum;
+    };
+
+    //challenge 15
+    public func squared_array(arr: [Nat]):async [Nat] {
+        let new_arr = Array.map<Nat, Nat>(arr, func (x) {
+            return x *x;
+        });
+        return new_arr;
+    };
+
+    //challenge 16
+    public func increase_by_index(arr: [Nat]): async [Nat] {
+        let new_arr = Array.mapEntries<Nat, Nat> (arr,func (x, index) {
+            return x + index;
+        });
+        return new_arr;
+    };
+
+    //challenge 17
+    public func contain(arr: [Nat], n: Nat): async Bool {
+
     }
 }
