@@ -7,6 +7,7 @@ import Hash "mo:base/Hash";
 import Iter "mo:base/Iter";
 import Map "mo:base/HashMap";
 import Nat8 "mo:base/Nat8";
+import Option "mo:base/Option";
 import Text "mo:base/Text";
 
 actor day2 {
@@ -136,27 +137,27 @@ actor day2 {
         return arr_blob.size();
     };
 
-    //  // Challenge 10 
-    // func swap(array : [Nat], i : Nat, j : Nat) : [Nat] {
-    //     let mutable_array = Array.thaw<Nat>(array);
-    //     let tmp = mutable_array[i];
-    //     mutable_array[i] := mutable_array[j];
-    //     mutable_array[j] := tmp;
-    //     return(Array.freeze<Nat>(mutable_array))
-    // };
+    // Challenge 10 
+    func swap(array : [Nat], i : Nat, j : Nat) : [Nat] {
+        let mutable_array = Array.thaw<Nat>(array);
+        let tmp = mutable_array[i];
+        mutable_array[i] := mutable_array[j];
+        mutable_array[j] := tmp;
+        return(Array.freeze<Nat>(mutable_array))
+    };
 
-    // public func bubble_sort(array : [Nat]) : async [Nat] {
-    //     var sorted = array;
-    //     let size = array.size();
-    //     for(i in Iter.range(0, size - 1)){
-    //         for (j in Iter.range(0, size - 1 - i)){
-    //             if(sorted[i] > sorted[i + 1]){
-    //                 sorted := _swap(sorted, i , j);
-    //             };
-    //         };
-    //     };
-    //     return (sorted)
-    // };
+    public func bubble_sort(array : [Nat]) : async [Nat] {
+        var sorted = array;
+        let size = array.size();
+        for(i in Iter.range(0, size - 1)){
+            for (j in Iter.range(0, size - 1 - i)){
+                if(sorted[i] > sorted[i + 1]){
+                    sorted := _swap(sorted, i , j);
+                };
+            };
+        };
+        return (sorted)
+    };
 
     //challenge 11
     public func nat_opt_to_nat(n: ?Nat, m: Nat): async Nat {
@@ -226,7 +227,8 @@ actor day2 {
     };
 
     //challenge 17
-    public func contain(arr: [Nat], n: Nat): async Bool {
-
-    }
+    let contain = func<A> (arr: [A], n: A, f: (A, A) -> Bool) : Bool {
+        let result = Array.find<A>(arr, func (x) {f(x,n)});
+        return Option.isSome(result);
+    };
 }
